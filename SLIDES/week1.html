@@ -1,0 +1,628 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+
+  <title>iOS Development — Week 1</title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <link rel="stylesheet" href="../dist/reveal.css">
+  <link rel="stylesheet" href="../dist/theme/white.css">
+
+  <!-- Syntax highlighting -->
+  <link rel="stylesheet" href="../plugin/highlight/monokai.css">
+
+  <style>
+    .reveal h1,
+    .reveal h2 {
+      text-transform: none;
+    }
+
+    .reveal .small {
+      font-size: 0.65em;
+    }
+
+    .reveal .muted {
+      opacity: 0.65;
+    }
+
+    .reveal code {
+      font-size: 0.8em;
+    }
+
+    .reveal pre {
+      width: 100%;
+    }
+
+    .two-columns {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 40px;
+      text-align: left;
+    }
+
+    .architecture {
+      font-size: 1.2em;
+      line-height: 1.8;
+    }
+
+    .box {
+      padding: 20px;
+      border: 2px solid #ccc;
+      border-radius: 12px;
+    }
+
+    .center {
+      text-align: center;
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="reveal">
+<div class="slides">
+
+<!-- ========================================================= -->
+<!-- 1 -->
+<!-- ========================================================= -->
+
+<section>
+  <h1>iOS Development</h1>
+
+  <h2>Week 1</h2>
+
+  <p>Introduction to Swift, Xcode & Apple Platforms</p>
+
+  <p class="muted">Swift 6.x · Xcode 26 · iOS 26</p>
+
+  <aside class="notes">
+    Welcome students to the course.
+    Today is about understanding the ecosystem and writing our first Swift program.
+    We are not trying to learn all of Swift today.
+  </aside>
+</section>
+
+
+<!-- ========================================================= -->
+<!-- 2 -->
+<!-- ========================================================= -->
+
+<section>
+  <h2>What will we learn?</h2>
+
+  <ul>
+    <li>How iOS applications are built</li>
+    <li>Swift programming</li>
+    <li>SwiftUI</li>
+    <li>Networking</li>
+    <li>Local storage</li>
+    <li>Concurrency</li>
+    <li>Testing</li>
+    <li>App distribution</li>
+  </ul>
+</section>
+
+
+<!-- ========================================================= -->
+<!-- 3 -->
+<!-- ========================================================= -->
+
+<section>
+  <h2>The big picture</h2>
+
+  <div class="architecture">
+
+    <div>Swift</div>
+    ↓
+    <div>Apple SDKs</div>
+    ↓
+    <div>SwiftUI / UIKit</div>
+    ↓
+    <div>iOS Application</div>
+    ↓
+    <div>iPhone / iPad / Simulator</div>
+
+  </div>
+
+  <aside class="notes">
+    Explain that Swift is the language.
+    Xcode is the development environment.
+    The SDK provides Apple's APIs.
+    SwiftUI and UIKit provide UI technologies.
+  </aside>
+</section>
+
+
+<!-- ========================================================= -->
+<!-- 4 -->
+<!-- ========================================================= -->
+
+<section>
+  <h2>Swift</h2>
+
+  <p class="fragment">
+    A modern programming language
+  </p>
+
+  <ul>
+    <li class="fragment">Type-safe</li>
+    <li class="fragment">Memory-safe</li>
+    <li class="fragment">Fast</li>
+    <li class="fragment">Expressive</li>
+    <li class="fragment">Designed for Apple platforms</li>
+  </ul>
+</section>
+
+
+<!-- ========================================================= -->
+<!-- 5 -->
+<!-- ========================================================= -->
+
+<section>
+  <h2>What is Xcode?</h2>
+
+  <p>Xcode is Apple's development environment.</p>
+
+  <div class="two-columns">
+
+    <div class="box">
+      <h3>Write</h3>
+      <p>Swift source code</p>
+    </div>
+
+    <div class="box">
+      <h3>Build</h3>
+      <p>Compile the application</p>
+    </div>
+
+    <div class="box">
+      <h3>Run</h3>
+      <p>Simulator or device</p>
+    </div>
+
+    <div class="box">
+      <h3>Debug</h3>
+      <p>Find and fix problems</p>
+    </div>
+
+  </div>
+</section>
+
+
+<!-- ========================================================= -->
+<!-- 6 -->
+<!-- ========================================================= -->
+
+<section>
+  <h2>Inside Xcode</h2>
+
+  <ul>
+    <li>Project Navigator</li>
+    <li>Source Editor</li>
+    <li>Inspector</li>
+    <li>Console</li>
+    <li>Build & Run</li>
+    <li>Simulator</li>
+  </ul>
+
+  <aside class="notes">
+    Open Xcode live here.
+    Show the interface rather than spending too much time on slides.
+  </aside>
+</section>
+
+
+<!-- ========================================================= -->
+<!-- 7 -->
+<!-- ========================================================= -->
+
+<section>
+  <h2>Project → Target → Scheme</h2>
+
+  <div class="architecture">
+
+    Project
+    <br>↓<br>
+    Target
+    <br>↓<br>
+    Scheme
+    <br>↓<br>
+    Build & Run
+
+  </div>
+
+  <p class="small">
+    You don't need to memorize all of this today.
+  </p>
+</section>
+
+
+<!-- ========================================================= -->
+<!-- 8 -->
+<!-- ========================================================= -->
+
+<section>
+  <h2>Our first Swift program</h2>
+
+  <pre><code class="language-swift" data-trim>
+print("Hello, iOS Development!")
+  </code></pre>
+
+  <p class="fragment">
+    That's a complete Swift program.
+  </p>
+</section>
+
+
+<!-- ========================================================= -->
+<!-- 9 -->
+<!-- ========================================================= -->
+
+<section>
+  <h2>Constants & Variables</h2>
+
+  <pre><code class="language-swift" data-trim>
+let name = "Alex"
+
+var score = 0
+
+score = 10
+  </code></pre>
+
+  <div class="two-columns">
+
+    <div>
+      <h3>let</h3>
+      <p>Constant</p>
+    </div>
+
+    <div>
+      <h3>var</h3>
+      <p>Variable</p>
+    </div>
+
+  </div>
+</section>
+
+
+<!-- ========================================================= -->
+<!-- 10 -->
+<!-- ========================================================= -->
+
+<section>
+  <h2>Basic types</h2>
+
+  <pre><code class="language-swift" data-trim>
+let name: String = "Alex"
+
+let age: Int = 20
+
+let price: Double = 19.99
+
+let isStudent: Bool = true
+  </code></pre>
+</section>
+
+
+<!-- ========================================================= -->
+<!-- 11 -->
+<!-- ========================================================= -->
+
+<section>
+  <h2>String interpolation</h2>
+
+  <pre><code class="language-swift" data-trim>
+let name = "Alex"
+let age = 20
+
+print("My name is \(name)")
+print("I am \(age) years old")
+  </code></pre>
+
+  <p class="fragment">
+    Swift can insert values directly into strings.
+  </p>
+</section>
+
+
+<!-- ========================================================= -->
+<!-- 12 -->
+<!-- ========================================================= -->
+
+<section>
+  <h2>Expressions</h2>
+
+  <pre><code class="language-swift" data-trim>
+let a = 10
+let b = 3
+
+print(a + b)
+print(a - b)
+print(a * b)
+print(a / b)
+  </code></pre>
+</section>
+
+
+<!-- ========================================================= -->
+<!-- 13 -->
+<!-- ========================================================= -->
+
+<section>
+  <h2>Making decisions</h2>
+
+  <pre><code class="language-swift" data-trim>
+let age = 20
+
+if age >= 18 {
+    print("Adult")
+} else {
+    print("Minor")
+}
+  </code></pre>
+</section>
+
+
+<!-- ========================================================= -->
+<!-- 14 -->
+<!-- ========================================================= -->
+
+<section>
+  <h2>Repeating work</h2>
+
+  <pre><code class="language-swift" data-trim>
+for number in 1...5 {
+    print(number)
+}
+  </code></pre>
+
+  <p class="fragment">
+    Loops let us process multiple values.
+  </p>
+</section>
+
+
+<!-- ========================================================= -->
+<!-- 15 -->
+<!-- ========================================================= -->
+
+<section>
+  <h2>Functions</h2>
+
+  <pre><code class="language-swift" data-trim>
+func greet(name: String) {
+    print("Hello, \(name)!")
+}
+
+greet(name: "Alex")
+  </code></pre>
+
+  <p class="fragment">
+    Function = reusable piece of behavior
+  </p>
+</section>
+
+
+<!-- ========================================================= -->
+<!-- 16 -->
+<!-- ========================================================= -->
+
+<section>
+  <h2>Functions return values</h2>
+
+  <pre><code class="language-swift" data-trim>
+func add(_ a: Int, _ b: Int) -> Int {
+    return a + b
+}
+
+let result = add(10, 20)
+
+print(result)
+  </code></pre>
+</section>
+
+
+<!-- ========================================================= -->
+<!-- 17 -->
+<!-- ========================================================= -->
+
+<section>
+  <h2>Console app vs iOS app</h2>
+
+  <div class="two-columns">
+
+    <div class="box">
+      <h3>Console</h3>
+
+      <ul>
+        <li>Swift</li>
+        <li>Input / output</li>
+        <li>Logic</li>
+        <li>Algorithms</li>
+      </ul>
+    </div>
+
+    <div class="box">
+      <h3>iOS</h3>
+
+      <ul>
+        <li>Swift</li>
+        <li>SwiftUI</li>
+        <li>iOS SDK</li>
+        <li>Device APIs</li>
+      </ul>
+    </div>
+
+  </div>
+
+  <p class="fragment">
+    We learn Swift first because it is the foundation.
+  </p>
+</section>
+
+
+<!-- ========================================================= -->
+<!-- 18 -->
+<!-- ========================================================= -->
+
+<section>
+  <h2>Where are we going?</h2>
+
+  <div class="architecture">
+
+    Swift
+    ↓
+    SwiftUI
+    ↓
+    Architecture
+    ↓
+    Networking
+    ↓
+    SwiftData
+    ↓
+    Concurrency
+    ↓
+    Testing
+    ↓
+    Production App
+
+  </div>
+</section>
+
+
+<!-- ========================================================= -->
+<!-- 19 -->
+<!-- ========================================================= -->
+
+<section>
+  <h2>Today's Lab</h2>
+
+  <h3>Student Profile</h3>
+
+  <p>Create a Swift console application.</p>
+
+  <ul>
+    <li>Student name</li>
+    <li>Age</li>
+    <li>Study year</li>
+    <li>Calculate next year's age</li>
+    <li>Print a formatted profile</li>
+    <li>Use an <code>if</code></li>
+    <li>Use a function</li>
+    <li>Use a loop</li>
+  </ul>
+</section>
+
+
+<!-- ========================================================= -->
+<!-- 20 -->
+<!-- ========================================================= -->
+
+<section>
+  <h2>Example output</h2>
+
+  <pre><code data-trim>
+========================
+Student Profile
+========================
+
+Name: Maria
+Age: 19
+Study year: 2
+
+Next year you will be 20.
+
+Subjects:
+- Programming
+- Mathematics
+- iOS Development
+
+Status: Student
+========================
+  </code></pre>
+</section>
+
+
+<!-- ========================================================= -->
+<!-- 21 -->
+<!-- ========================================================= -->
+
+<section>
+  <h2>Bonus challenge</h2>
+
+  <p>Calculate expenses.</p>
+
+  <pre><code class="language-swift" data-trim>
+let expenses = [
+    120.0,
+    50.0,
+    80.0,
+    35.0
+]
+  </code></pre>
+
+  <p>Calculate:</p>
+
+  <ul>
+    <li>Total</li>
+    <li>Average</li>
+    <li>Largest expense</li>
+  </ul>
+</section>
+
+
+<!-- ========================================================= -->
+<!-- 22 -->
+<!-- ========================================================= -->
+
+<section>
+  <h2>Before you leave</h2>
+
+  <ol>
+    <li>Can you create a Swift project?</li>
+    <li>Can you run it?</li>
+    <li>Can you create a variable?</li>
+    <li>Can you write an <code>if</code>?</li>
+    <li>Can you write a loop?</li>
+    <li>Can you write a function?</li>
+  </ol>
+
+  <p class="fragment">
+    If yes — you're ready for Week 2.
+  </p>
+</section>
+
+
+<!-- ========================================================= -->
+<!-- 23 -->
+<!-- ========================================================= -->
+
+<section>
+  <h1>Questions?</h1>
+
+  <p>Next: Swift types, collections & protocols</p>
+</section>
+
+</div>
+</div>
+
+
+<script src="../dist/reveal.js"></script>
+<script src="../plugin/highlight/highlight.js"></script>
+
+<script>
+  Reveal.initialize({
+    hash: true,
+    slideNumber: 'c/t',
+    transition: 'slide',
+    controls: true,
+    progress: true,
+    center: true,
+    plugins: [ RevealHighlight ]
+  });
+</script>
+
+</body>
+</html>
