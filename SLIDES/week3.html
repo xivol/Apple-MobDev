@@ -1,4 +1,3 @@
-\
 <!doctype html>
 <html lang="en">
 <head>
@@ -196,14 +195,25 @@
       background: var(--code) !important;
       border: 1px solid rgba(255,255,255,.09);
       box-shadow: 0 16px 34px rgba(0,0,0,.22);
+
+      /* allow long code blocks to scroll instead of clipping */
+      overflow: auto;
+      max-height: 600px;
     }
 
     pre code {
-      padding: 19px !important;
-      font-size: .39em !important;
-      line-height: 1.42 !important;
-      max-height: 490px !important;
+      display: block;
+      padding: 18px 22px !important;
+      font-size: 1.0em !important;   /* ~41% larger than before */
+      line-height: 1.5 !important;
+      max-height: none !important;
+      overflow: visible !important;
     }
+
+    /* thin dark-theme scrollbars so they don't distract */
+    pre::-webkit-scrollbar        { width: 10px; height: 10px; }
+    pre::-webkit-scrollbar-thumb  { background: rgba(255,255,255,.18); border-radius: 8px; }
+    pre::-webkit-scrollbar-track  { background: transparent; }
 
     .flow {
       display: flex;
@@ -560,7 +570,81 @@
     <!-- 10 -->
     <section>
       <div class="section-marker">Layout</div>
-      <div class="eyebrow">09 · Padding + frame</div>
+      <div class="eyebrow">09 · Layout execution</div>
+      <h2>How SwiftUI actually lays a view out</h2>
+      <div class="flow" style="margin-top:34px">
+        <div class="node cyan">1 · Parent<br><span class="tiny">proposes</span></div>
+        <div class="arrow">→</div>
+        <div class="node violet">2 · Child<br><span class="tiny">chooses size</span></div>
+        <div class="arrow">→</div>
+        <div class="node green">3 · Parent<br><span class="tiny">places child</span></div>
+      </div>
+      <div class="grid-3">
+        <div class="card accent">
+          <h3>Proposal</h3>
+          <p class="small">The parent offers a size constraint. It can be fixed, flexible, or partially unspecified.</p>
+        </div>
+        <div class="card accent-violet">
+          <h3>Measurement</h3>
+          <p class="small">The child chooses the size it wants within that proposal, using intrinsic content and its own layout rules.</p>
+        </div>
+        <div class="card accent-green">
+          <h3>Placement</h3>
+          <p class="small">The parent positions the child in its coordinate space, using alignment and the final measured size.</p>
+        </div>
+      </div>
+      <div class="quote" style="margin-top:20px">The key question when debugging layout is: <strong>what proposal reached this view, and what size did it return?</strong></div>
+      <aside class="notes">This is the core execution model. Do not describe SwiftUI as a CSS-like coordinate system. A parent proposes; a child measures; the parent places.</aside>
+    </section>
+
+    <!-- 11 -->
+    <section>
+      <div class="section-marker">Layout</div>
+      <div class="eyebrow">10 · Custom Layout</div>
+      <h2>What the <code>Layout</code> protocol gives you</h2>
+      <div class="grid-2">
+        <pre><code class="language-swift">struct FlowLayout: Layout {
+
+    func sizeThatFits(
+        proposal: ProposedViewSize,
+        subviews: Subviews,
+        cache: inout Cache
+    ) -> CGSize {
+        // measure subviews,
+        // wrap into rows,
+        // return container size
+    }
+
+    func placeSubviews(
+        in bounds: CGRect,
+        proposal: ProposedViewSize,
+        subviews: Subviews,
+        cache: inout Cache
+    ) {
+        // calculate positions
+        // call subview.place(...)
+    }
+}</code></pre>
+        <div>
+          <div class="card accent-violet">
+            <h3>Two responsibilities</h3>
+            <p class="small"><strong><code>sizeThatFits</code></strong><br>Measure the container given the parent's proposal.</p>
+            <p class="small"><strong><code>placeSubviews</code></strong><br>Put each child at a calculated position.</p>
+          </div>
+          <div class="card accent" style="margin-top:16px">
+            <h3>Optional cache</h3>
+            <p class="small">Use <code>Cache</code> to retain expensive measurements between layout passes when useful.</p>
+          </div>
+          <p class="tiny" style="margin-top:12px">Typical custom layouts: flow/wrap layouts, tagged chips, dashboards, radial arrangements, specialized responsive composition.</p>
+        </div>
+      </div>
+      <aside class="notes">The Layout protocol is the escape hatch for custom geometry. Keep the implementation deterministic and separate measuring from placement.</aside>
+    </section>
+
+    <!-- 12 -->
+    <section>
+      <div class="section-marker">Layout</div>
+      <div class="eyebrow">11 · Padding + frame</div>'''
       <h2>Constraints, not coordinates</h2>
       <div class="grid-2">
         <div>
@@ -992,7 +1076,49 @@ final class ProfileModel: ObservableObject {
     <!-- 26 -->
     <section>
       <div class="section-marker">State</div>
-      <div class="eyebrow">25 · StateObject vs ObservedObject</div>
+      <div class="eyebrow">25 · ObservableObject</div>
+      <h2><code>ObservableObject</code>: the legacy observation contract</h2>
+      <div class="grid-2">
+        <pre><code class="language-swift">final class ProfileModel: ObservableObject {
+    @Published var name = ""
+    @Published var isLoading = false
+}</code></pre>
+        <div class="card accent-violet">
+          <h3>What it means</h3>
+          <p class="small"><code>ObservableObject</code> makes the model's changes observable to clients that subscribe to the object's change stream.</p>
+          <p class="small">It belongs to the Combine-era SwiftUI model and remains important when maintaining existing applications.</p>
+        </div>
+      </div>
+      <aside class="notes">Introduce the name first. Then explain that @Published is a property-level publisher mechanism layered on top.</aside>
+    </section>
+
+    <!-- 27 -->
+    <section>
+      <div class="section-marker">State</div>
+      <div class="eyebrow">26 · @Published</div>
+      <h2>What does <code>@Published</code> actually mean?</h2>
+      <div class="grid-2">
+        <pre><code class="language-swift">@Published var name = ""</code></pre>
+        <div class="card accent">
+          <h3>Mechanics</h3>
+          <div class="flow">
+            <div class="node">Property changes</div>
+            <div class="arrow">→</div>
+            <div class="node cyan">Publisher emits</div>
+            <div class="arrow">→</div>
+            <div class="node">Object observers react</div>
+          </div>
+          <p class="small">It is a <strong>Combine property wrapper</strong>. It publishes a change stream associated with the property; it is not simply a generic SwiftUI “state keyword.”</p>
+        </div>
+      </div>
+      <div class="quote" style="margin-top:20px">This is why <code>ObservableObject</code> + <code>@Published</code> is conceptually different from modern <code>@Observable</code> + Observation.</div>
+      <aside class="notes">Emphasize that @Published is about publishing values into Combine. The modern Observation system uses a different mechanism for dependency tracking.</aside>
+    </section>
+
+    <!-- 28 -->
+    <section>
+      <div class="section-marker">State</div>
+      <div class="eyebrow">27 · StateObject vs ObservedObject</div>
       <h2>Old model: lifetime vs reference</h2>
       <div class="grid-2">
         <div class="card accent">
@@ -1015,7 +1141,7 @@ var model: ProfileModel</code></pre>
     <!-- 27 -->
     <section>
       <div class="section-marker">State</div>
-      <div class="eyebrow">26 · Modern Observation</div>
+      <div class="eyebrow">28 · Modern Observation</div>
       <h2><code>@Observable</code>: make the model observable</h2>
       <div class="grid-2">
         <pre><code class="language-swift">import Observation
@@ -1041,7 +1167,7 @@ final class ProfileModel {
     <!-- 28 -->
     <section>
       <div class="section-marker">State</div>
-      <div class="eyebrow">27 · What observation tracks</div>
+      <div class="eyebrow">29 · What observation tracks</div>
       <h2>Dependency tracking follows what the view reads</h2>
       <pre><code class="language-swift">struct ProfileHeader: View {
     let model: ProfileModel
@@ -1064,7 +1190,7 @@ final class ProfileModel {
     <!-- 29 -->
     <section>
       <div class="section-marker">State</div>
-      <div class="eyebrow">28 · Owning an @Observable model</div>
+      <div class="eyebrow">30 · Owning an @Observable model</div>
       <h2>Modern ownership: <code>@State</code> can own the observable instance</h2>
       <div class="grid-2">
         <pre><code class="language-swift">@Observable
