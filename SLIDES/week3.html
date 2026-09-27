@@ -1513,6 +1513,7 @@ fun Hello() {
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/reveal.js@5.2.1/dist/reveal.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.2.1/plugin/highlight/highlight.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/highlight.js@11.11.1/lib/highlight.min.js"></script>
 <script>
   Reveal.initialize({
@@ -1528,7 +1529,7 @@ fun Hello() {
     maxScale: 1.35,
     transition: "slide",
     backgroundTransition: "fade",
-    plugins: []
+    plugins: [RevealHighlight]
   });
 
   if (window.hljs) {
