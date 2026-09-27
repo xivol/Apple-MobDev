@@ -1,0 +1,1415 @@
+\
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SwiftUI Handbook — Declarative UI, Layout, State & Architecture</title>
+
+  <link rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/reveal.js@5.2.1/dist/reveal.css">
+  <link rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/reveal.js@5.2.1/dist/theme/black.css">
+  <link rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/highlight.js@11.11.1/styles/atom-one-dark.min.css">
+
+  <style>
+    :root {
+      --bg: #0b1020;
+      --surface: #11182a;
+      --surface-2: #162039;
+      --text: #eef4ff;
+      --muted: #aab7ce;
+      --cyan: #58d7ff;
+      --violet: #9c8cff;
+      --green: #72e2a5;
+      --yellow: #f2d36b;
+      --red: #ff8f8f;
+      --line: rgba(255,255,255,.10);
+      --code: #0a0f1a;
+    }
+
+    .reveal {
+      background:
+        radial-gradient(circle at 88% 7%, rgba(88,215,255,.09), transparent 26%),
+        radial-gradient(circle at 6% 92%, rgba(156,140,255,.08), transparent 28%),
+        var(--bg);
+      color: var(--text);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+                   "SF Pro Display", "SF Pro Text", "Segoe UI", sans-serif;
+    }
+
+    .reveal .slides section {
+      text-align: left;
+    }
+
+    .reveal h1, .reveal h2, .reveal h3 {
+      text-transform: none;
+      letter-spacing: -0.03em;
+      color: var(--text);
+    }
+
+    .reveal h1 {
+      font-size: 2.15em;
+      line-height: 1.02;
+      margin-bottom: .28em;
+    }
+
+    .reveal h2 {
+      font-size: 1.34em;
+      margin-bottom: .42em;
+    }
+
+    .reveal h3 {
+      font-size: .86em;
+      margin-bottom: .28em;
+      color: #d7e5ff;
+    }
+
+    .eyebrow {
+      font-size: .36em;
+      text-transform: uppercase;
+      letter-spacing: .18em;
+      color: var(--cyan);
+      font-weight: 750;
+      margin-bottom: .9em;
+    }
+
+    .lede {
+      font-size: .66em;
+      color: var(--muted);
+      max-width: 880px;
+      line-height: 1.45;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      align-items: stretch;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+      align-items: stretch;
+    }
+
+    .card {
+      background: linear-gradient(180deg, rgba(255,255,255,.035), rgba(255,255,255,.02));
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 20px 22px;
+      box-shadow: 0 12px 30px rgba(0,0,0,.14);
+    }
+
+    .card strong {
+      color: #fff;
+    }
+
+    .accent {
+      border-top: 3px solid var(--cyan);
+    }
+
+    .accent-violet {
+      border-top: 3px solid var(--violet);
+    }
+
+    .accent-green {
+      border-top: 3px solid var(--green);
+    }
+
+    .accent-yellow {
+      border-top: 3px solid var(--yellow);
+    }
+
+    .tiny {
+      font-size: .38em;
+      color: var(--muted);
+      line-height: 1.4;
+    }
+
+    .small {
+      font-size: .52em;
+      line-height: 1.4;
+    }
+
+    .big {
+      font-size: .88em;
+      line-height: 1.22;
+    }
+
+    .quote {
+      font-size: .82em;
+      line-height: 1.22;
+      padding: 26px 30px;
+      border-left: 4px solid var(--cyan);
+      background: rgba(88,215,255,.05);
+      border-radius: 0 16px 16px 0;
+    }
+
+    .pill-row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 18px;
+    }
+
+    .pill {
+      padding: 7px 12px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.065);
+      border: 1px solid var(--line);
+      color: #dce8fb;
+      font-size: .42em;
+      font-weight: 650;
+    }
+
+    .matrix {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: .42em;
+      overflow: hidden;
+      border-radius: 14px;
+    }
+
+    .matrix th, .matrix td {
+      border: 1px solid var(--line);
+      padding: 10px 12px;
+      vertical-align: top;
+    }
+
+    .matrix th {
+      color: #fff;
+      background: rgba(255,255,255,.05);
+    }
+
+    .matrix td {
+      color: #ced9ec;
+    }
+
+    pre {
+      width: 100%;
+      margin: 0 !important;
+      border-radius: 16px;
+      background: var(--code) !important;
+      border: 1px solid rgba(255,255,255,.09);
+      box-shadow: 0 16px 34px rgba(0,0,0,.22);
+    }
+
+    pre code {
+      padding: 19px !important;
+      font-size: .39em !important;
+      line-height: 1.42 !important;
+      max-height: 490px !important;
+    }
+
+    .flow {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      margin: 24px 0;
+      flex-wrap: wrap;
+    }
+
+    .node {
+      padding: 14px 18px;
+      border-radius: 14px;
+      background: var(--surface);
+      border: 1px solid var(--line);
+      font-weight: 700;
+      font-size: .50em;
+      text-align: center;
+      min-width: 132px;
+    }
+
+    .node.cyan { border-color: rgba(88,215,255,.55); }
+    .node.violet { border-color: rgba(156,140,255,.55); }
+    .node.green { border-color: rgba(114,226,165,.55); }
+    .arrow {
+      color: var(--muted);
+      font-size: .58em;
+    }
+
+    .two-line {
+      display: grid;
+      grid-template-columns: 1fr 1.2fr;
+      gap: 24px;
+      align-items: center;
+    }
+
+    .stat {
+      font-size: 1.65em;
+      font-weight: 800;
+      letter-spacing: -.04em;
+      color: var(--cyan);
+    }
+
+    .section-marker {
+      position: absolute;
+      right: 0;
+      top: 0;
+      font-size: .38em;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: .14em;
+    }
+
+    .footer {
+      position: fixed;
+      bottom: 14px;
+      left: 34px;
+      right: 34px;
+      display: flex;
+      justify-content: space-between;
+      color: rgba(210,221,240,.52);
+      font-size: 11px;
+      letter-spacing: .02em;
+      z-index: 20;
+      pointer-events: none;
+    }
+
+    .footer .source {
+      max-width: 68%;
+      text-align: left;
+    }
+
+    .footer .brand {
+      text-align: right;
+    }
+
+    .reveal .progress {
+      color: var(--cyan);
+      height: 4px;
+    }
+
+    .reveal .controls {
+      color: var(--cyan);
+    }
+
+    .kbd {
+      display: inline-block;
+      padding: 2px 7px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      background: rgba(255,255,255,.07);
+      border: 1px solid var(--line);
+      border-bottom-width: 2px;
+      border-radius: 5px;
+      font-size: .55em;
+      color: #dce8fb;
+    }
+
+    .check {
+      color: var(--green);
+      font-weight: 800;
+    }
+
+    .warn {
+      color: var(--yellow);
+      font-weight: 800;
+    }
+
+    .code-title {
+      font-size: .40em;
+      color: var(--muted);
+      margin: 0 0 8px 2px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    }
+
+    @media (max-width: 900px) {
+      .grid-2, .grid-3, .two-line {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+
+<body>
+<div class="reveal">
+  <div class="slides">
+
+    <!-- 01 -->
+    <section data-transition="fade">
+      <div class="eyebrow">SwiftUI Handbook · 40 slides</div>
+      <h1>Declarative UI<br><span style="color:var(--cyan)">without the magic</span></h1>
+      <p class="lede">A professional mental model for SwiftUI layout, components, state, Observation—and how the same ideas map to React and Jetpack Compose.</p>
+      <div class="pill-row">
+        <span class="pill">SwiftUI</span>
+        <span class="pill">Observation</span>
+        <span class="pill">Layout</span>
+        <span class="pill">Architecture</span>
+        <span class="pill">React</span>
+        <span class="pill">Compose</span>
+      </div>
+      <aside class="notes">Open by telling the audience this is an engineering mental-model deck, not an API catalog.</aside>
+    </section>
+
+    <!-- 02 -->
+    <section>
+      <div class="eyebrow">01 · The shift</div>
+      <h2>Imperative UI → Declarative UI</h2>
+      <div class="two-line">
+        <div class="card accent-violet">
+          <h3>Imperative</h3>
+          <div class="flow">
+            <div class="node violet">Create view</div><div class="arrow">→</div>
+            <div class="node violet">Mutate view</div><div class="arrow">→</div>
+            <div class="node violet">Keep in sync</div>
+          </div>
+          <p class="small">“Find the label, change the text, hide the button, invalidate the table.”</p>
+        </div>
+        <div class="card accent">
+          <h3>Declarative</h3>
+          <div class="flow">
+            <div class="node cyan">State</div><div class="arrow">→</div>
+            <div class="node cyan">UI description</div><div class="arrow">→</div>
+            <div class="node cyan">Rendered UI</div>
+          </div>
+          <p class="small">“For this state, this is the UI.” The framework reconciles the result.</p>
+        </div>
+      </div>
+      <aside class="notes">The payoff is simpler synchronization: state is the source of truth, not a pile of mutable view objects.</aside>
+    </section>
+
+    <!-- 03 -->
+    <section>
+      <div class="eyebrow">02 · Three ecosystems</div>
+      <h2>SwiftUI, Compose, React: same idea, different runtime</h2>
+      <div class="grid-3">
+        <div class="card accent">
+          <h3>SwiftUI</h3>
+          <div class="big">View → <code>body</code> → state-driven updates</div>
+          <div class="tiny" style="margin-top:14px">Native Apple UI + Swift Observation</div>
+        </div>
+        <div class="card accent-green">
+          <h3>Jetpack Compose</h3>
+          <div class="big">Composable → Composition → recomposition</div>
+          <div class="tiny" style="margin-top:14px">Kotlin + Compose runtime state</div>
+        </div>
+        <div class="card accent-violet">
+          <h3>React</h3>
+          <div class="big">Component → render → state/props update</div>
+          <div class="tiny" style="margin-top:14px">JavaScript/TypeScript + component model</div>
+        </div>
+      </div>
+      <div class="quote" style="margin-top:24px">The transferable skill is not syntax. It is knowing <strong>who owns state, how it flows, and what depends on it.</strong></div>
+      <aside class="notes">Use this as the cross-platform anchor: framework-specific APIs become easier once the common model is clear.</aside>
+    </section>
+
+    <!-- 04 -->
+    <section>
+      <div class="eyebrow">03 · Mental model</div>
+      <h2>The declarative loop</h2>
+      <div class="flow" style="margin-top:50px">
+        <div class="node cyan">State / Model</div><div class="arrow">→</div>
+        <div class="node cyan">View description</div><div class="arrow">→</div>
+        <div class="node cyan">Rendered UI</div><div class="arrow">→</div>
+        <div class="node green">User event</div><div class="arrow">→</div>
+        <div class="node green">State change</div>
+      </div>
+      <div class="grid-2">
+        <div class="card">
+          <div class="stat">1</div>
+          <p class="small">The UI is a function of current state.</p>
+        </div>
+        <div class="card">
+          <div class="stat">2</div>
+          <p class="small">Events update the source of truth—not individual labels or rows.</p>
+        </div>
+      </div>
+      <aside class="notes">This loop will recur throughout the deck. State is not an implementation detail; it is the input to rendering.</aside>
+    </section>
+
+    <!-- 05 -->
+    <section>
+      <div class="section-marker">Layout</div>
+      <div class="eyebrow">04 · Layout foundations</div>
+      <h2>Start with relationships, not coordinates</h2>
+      <div class="grid-2">
+        <div class="card accent">
+          <h3>Good default vocabulary</h3>
+          <div class="pill-row">
+            <span class="pill">HStack</span><span class="pill">VStack</span><span class="pill">ZStack</span>
+            <span class="pill">Spacer</span><span class="pill">padding</span><span class="pill">frame</span>
+            <span class="pill">alignment</span><span class="pill">Grid</span>
+          </div>
+        </div>
+        <div class="card accent-violet">
+          <h3>Resilient layouts</h3>
+          <p class="small">Describe how things relate to each other. Let the system adapt to device size, text size, localization, and platform conventions.</p>
+          <p class="tiny">Avoid “this device is 390 × 844, therefore…” thinking.</p>
+        </div>
+      </div>
+      <aside class="notes">Apple positions stacks and grids as the primitives for flexible layouts; explicit coordinates are a niche tool, not the default.</aside>
+    </section>
+
+    <!-- 06 -->
+    <section>
+      <div class="section-marker">Layout</div>
+      <div class="eyebrow">05 · VStack / HStack</div>
+      <h2>The 80% layout</h2>
+      <div class="grid-2">
+        <div>
+          <div class="code-title">SwiftUI</div>
+          <pre><code class="language-swift">VStack(alignment: .leading, spacing: 8) {
+    Text("Account")
+        .font(.headline)
+
+    HStack {
+        Text("Alex")
+        Spacer()
+        Image(systemName: "chevron.right")
+    }
+}</code></pre>
+        </div>
+        <div class="card">
+          <h3>Think structurally</h3>
+          <div class="flow">
+            <div class="node cyan">VStack</div>
+          </div>
+          <div class="flow">
+            <div class="node">Text</div>
+            <div class="node">HStack</div>
+          </div>
+          <p class="small">Stacks compose naturally. Most screens can be sketched as a tree before you add styling.</p>
+        </div>
+      </div>
+      <aside class="notes">HStack lays out horizontally, VStack vertically. Both are simple primitives that become powerful through composition and modifiers.</aside>
+    </section>
+
+    <!-- 07 -->
+    <section>
+      <div class="section-marker">Layout</div>
+      <div class="eyebrow">06 · ZStack + layering</div>
+      <h2>Depth is still declarative</h2>
+      <div class="grid-2">
+        <pre><code class="language-swift">ZStack {
+    Image("hero")
+        .resizable()
+        .scaledToFill()
+
+    LinearGradient(
+        colors: [.clear, .black.opacity(0.7)],
+        startPoint: .top,
+        endPoint: .bottom
+    )
+
+    Text("Explore")
+        .font(.largeTitle.bold())
+}</code></pre>
+        <div class="card accent-violet">
+          <h3>Typical uses</h3>
+          <div class="pill-row">
+            <span class="pill">Hero overlays</span>
+            <span class="pill">Badges</span>
+            <span class="pill">Loading layers</span>
+            <span class="pill">Floating controls</span>
+            <span class="pill">Backgrounds</span>
+          </div>
+          <p class="small" style="margin-top:20px">Layering is a relationship too: “this sits over that.”</p>
+        </div>
+      </div>
+      <aside class="notes">ZStack is not a free-for-all canvas. Use it when layering itself is the design relationship.</aside>
+    </section>
+
+    <!-- 08 -->
+    <section>
+      <div class="section-marker">Layout</div>
+      <div class="eyebrow">07 · Spacer, alignment, spacing</div>
+      <h2>Use the layout system before adding geometry</h2>
+      <div class="grid-3">
+        <div class="card accent">
+          <h3>Alignment</h3>
+          <p class="small"><code>.leading</code>, <code>.center</code>, <code>.trailing</code>, <code>.top</code>, <code>.bottom</code></p>
+        </div>
+        <div class="card accent-green">
+          <h3>Spacing</h3>
+          <p class="small">Prefer stack spacing or padding to unexplained offsets.</p>
+        </div>
+        <div class="card accent-violet">
+          <h3>Flexible space</h3>
+          <pre><code class="language-swift">HStack {
+    Text("Settings")
+    Spacer()
+    Text("Done")
+}</code></pre>
+        </div>
+      </div>
+      <aside class="notes">The simplest resilient solution is often one alignment choice plus one Spacer, not GeometryReader plus offsets.</aside>
+    </section>
+
+    <!-- 09 -->
+    <section>
+      <div class="section-marker">Layout</div>
+      <div class="eyebrow">08 · Proposal thinking</div>
+      <h2>Why SwiftUI layout feels different</h2>
+      <div class="flow" style="margin-top:38px">
+        <div class="node cyan">Parent<br><span class="tiny">proposes</span></div>
+        <div class="arrow">→</div>
+        <div class="node violet">Child<br><span class="tiny">chooses size</span></div>
+        <div class="arrow">→</div>
+        <div class="node green">Parent<br><span class="tiny">places</span></div>
+      </div>
+      <div class="quote">The layout system is relationship-driven: proposal → size → placement. That’s why “just set a coordinate” is rarely the best first move.</div>
+      <p class="tiny">For custom containers, SwiftUI exposes the <code>Layout</code> protocol with <code>sizeThatFits</code> and <code>placeSubviews</code>.</p>
+      <aside class="notes">This is the conceptual bridge to custom Layout. Keep the exact algorithm out of the beginner path.</aside>
+    </section>
+
+    <!-- 10 -->
+    <section>
+      <div class="section-marker">Layout</div>
+      <div class="eyebrow">09 · Padding + frame</div>
+      <h2>Constraints, not coordinates</h2>
+      <div class="grid-2">
+        <div>
+          <div class="code-title">Prefer flexible constraints</div>
+          <pre><code class="language-swift">Button("Continue") { ... }
+    .frame(maxWidth: .infinity)
+    .padding(.horizontal)</code></pre>
+        </div>
+        <div class="card accent">
+          <h3>Good</h3>
+          <p class="small">“Fill the available width, respecting surrounding constraints.”</p>
+          <h3 style="margin-top:18px">Fragile</h3>
+          <pre><code class="language-swift">.frame(width: 390)</code></pre>
+        </div>
+      </div>
+      <aside class="notes">Hard-coded device sizes create problems with iPad, split view, landscape, text scaling, and localization.</aside>
+    </section>
+
+    <!-- 11 -->
+    <section>
+      <div class="section-marker">Layout</div>
+      <div class="eyebrow">10 · Scroll containers</div>
+      <h2>ScrollView, LazyVStack, LazyVGrid</h2>
+      <div class="grid-3">
+        <div class="card">
+          <h3>ScrollView</h3>
+          <p class="small">Custom scrolling composition.</p>
+        </div>
+        <div class="card accent-green">
+          <h3>LazyVStack</h3>
+          <p class="small">Vertical repeated content, created as needed.</p>
+        </div>
+        <div class="card accent-violet">
+          <h3>LazyVGrid</h3>
+          <p class="small">Repeated 2D content with flexible columns.</p>
+        </div>
+      </div>
+      <div class="flow">
+        <div class="node">ScrollView</div><div class="arrow">+</div>
+        <div class="node cyan">Lazy content</div><div class="arrow">→</div>
+        <div class="node">Large / repeated UI</div>
+      </div>
+      <aside class="notes">Apple recommends selecting container views based on content and performance needs. Lazy is a tool, not a reflex.</aside>
+    </section>
+
+    <!-- 12 -->
+    <section>
+      <div class="section-marker">Layout</div>
+      <div class="eyebrow">11 · Grid</div>
+      <h2>Two dimensions without hand-positioning</h2>
+      <pre><code class="language-swift">let columns = [
+    GridItem(.flexible()),
+    GridItem(.flexible())
+]
+
+LazyVGrid(columns: columns, spacing: 16) {
+    ForEach(products) { product in
+        ProductCard(product: product)
+    }
+}</code></pre>
+      <div class="pill-row">
+        <span class="pill">Catalogues</span>
+        <span class="pill">Dashboards</span>
+        <span class="pill">Photo galleries</span>
+        <span class="pill">Feature tiles</span>
+      </div>
+      <aside class="notes">Use Grid for explicit 2D relationships; LazyVGrid/LazyHGrid for repeated content that benefits from lazy creation.</aside>
+    </section>
+
+    <!-- 13 -->
+    <section>
+      <div class="section-marker">Layout</div>
+      <div class="eyebrow">12 · List and Form</div>
+      <h2>Use system containers when the semantics fit</h2>
+      <div class="grid-2">
+        <div class="card accent">
+          <h3>List</h3>
+          <pre><code class="language-swift">List {
+    Section("Account") {
+        Text("Profile")
+        Text("Security")
+    }
+}</code></pre>
+          <p class="tiny">Structured rows + platform-standard list behavior.</p>
+        </div>
+        <div class="card accent-yellow">
+          <h3>Form</h3>
+          <pre><code class="language-swift">Form {
+    TextField("Name", text: $name)
+    Toggle("Notifications",
+           isOn: $enabled)
+}</code></pre>
+          <p class="tiny">Settings and data entry with platform-aware presentation.</p>
+        </div>
+      </div>
+      <aside class="notes">A custom ScrollView can mimic a list, but List and Form bring semantics and platform behavior you should not recreate casually.</aside>
+    </section>
+
+    <!-- 14 -->
+    <section>
+      <div class="section-marker">Layout</div>
+      <div class="eyebrow">13 · Safe areas</div>
+      <h2>Backgrounds can go edge-to-edge; content usually should not</h2>
+      <div class="grid-2">
+        <pre><code class="language-swift">ZStack {
+    Color.blue
+        .ignoresSafeArea()
+
+    ContentView()
+}</code></pre>
+        <div class="card">
+          <div class="big">Think in two layers:</div>
+          <div class="flow">
+            <div class="node violet">Background</div>
+            <div class="arrow">→</div>
+            <div class="node cyan">Content</div>
+          </div>
+          <p class="small">Use safe-area behavior intentionally; don’t use it as a shortcut for arbitrary positioning.</p>
+        </div>
+      </div>
+      <aside class="notes">The common pattern is edge-to-edge background with safe-area-respecting foreground content.</aside>
+    </section>
+
+    <!-- 15 -->
+    <section>
+      <div class="section-marker">Layout</div>
+      <div class="eyebrow">14 · ViewThatFits + custom Layout</div>
+      <h2>Adapt when the available space changes</h2>
+      <div class="grid-2">
+        <div class="card accent">
+          <h3>ViewThatFits</h3>
+          <pre><code class="language-swift">ViewThatFits {
+    HStack {
+        WideToolbar()
+    }
+
+    VStack {
+        CompactToolbar()
+    }
+}</code></pre>
+          <p class="tiny">Let the container select the first child that fits.</p>
+        </div>
+        <div class="card accent-violet">
+          <h3>Custom Layout</h3>
+          <p class="small">Reach for the <code>Layout</code> protocol when the design needs geometry behavior that the built-ins cannot express cleanly.</p>
+          <p class="tiny">Advanced tool; introduce after the built-in layout vocabulary is comfortable.</p>
+        </div>
+      </div>
+      <aside class="notes">These APIs are useful when adaptation is part of the design, not merely because the screen looks complex.</aside>
+    </section>
+
+    <!-- 16 -->
+    <section>
+      <div class="section-marker">Components</div>
+      <div class="eyebrow">15 · Components</div>
+      <h2>A component owns a piece of UI—not the whole app</h2>
+      <div class="grid-2">
+        <div class="card accent">
+          <h3>Good component boundary</h3>
+          <pre><code class="language-swift">struct ProductCard: View {
+    let product: Product
+
+    var body: some View {
+        VStack(alignment: .leading) {
+            Text(product.name)
+            Text(product.price)
+            Button("Buy") { ... }
+        }
+    }
+}</code></pre>
+        </div>
+        <div class="card">
+          <h3>Component should answer</h3>
+          <div class="quote">“What should this UI look like, and what inputs/events does it expose?”</div>
+          <p class="small"><span class="check">✓</span> reusable inputs<br><span class="check">✓</span> semantic actions<br><span class="check">✓</span> focused responsibility</p>
+        </div>
+      </div>
+      <aside class="notes">Components are where declarative composition becomes architecture. Keep them focused and configurable.</aside>
+    </section>
+
+    <!-- 17 -->
+    <section>
+      <div class="section-marker">Components</div>
+      <div class="eyebrow">16 · Core text + image</div>
+      <h2>Text, Label, Image, SF Symbols</h2>
+      <div class="grid-3">
+        <div class="card">
+          <h3>Text</h3>
+          <pre><code class="language-swift">Text("Balance")
+    .font(.headline)
+    .foregroundStyle(.secondary)</code></pre>
+        </div>
+        <div class="card accent">
+          <h3>Label</h3>
+          <pre><code class="language-swift">Label("Favorites",
+      systemImage: "star.fill")</code></pre>
+        </div>
+        <div class="card accent-violet">
+          <h3>Image</h3>
+          <pre><code class="language-swift">Image(systemName:
+      "person.circle.fill")
+    .font(.title)</code></pre>
+        </div>
+      </div>
+      <aside class="notes">Prefer semantic text styles and SF Symbols where they fit. Avoid treating typography as absolute pixels.</aside>
+    </section>
+
+    <!-- 18 -->
+    <section>
+      <div class="section-marker">Components</div>
+      <div class="eyebrow">17 · Controls</div>
+      <h2>Buttons and inputs are semantic components</h2>
+      <div class="grid-2">
+        <pre><code class="language-swift">Button("Save") {
+    save()
+}
+
+Button("Delete", role: .destructive) {
+    delete()
+}
+
+TextField("Name", text: $name)
+
+Toggle("Notifications",
+       isOn: $enabled)</code></pre>
+        <div class="card accent-green">
+          <h3>Why semantics matter</h3>
+          <p class="small">System controls bring behavior, accessibility, focus, keyboard handling, and platform conventions.</p>
+          <div class="pill-row">
+            <span class="pill">Button</span>
+            <span class="pill">TextField</span>
+            <span class="pill">SecureField</span>
+            <span class="pill">Toggle</span>
+            <span class="pill">Picker</span>
+          </div>
+        </div>
+      </div>
+      <aside class="notes">A Text with an onTapGesture may look like a button, but it does not communicate the same semantic intent.</aside>
+    </section>
+
+    <!-- 19 -->
+    <section>
+      <div class="section-marker">Components</div>
+      <div class="eyebrow">18 · Selection + progress</div>
+      <h2>Picker, Slider, Stepper, DatePicker, ProgressView</h2>
+      <div class="grid-3">
+        <div class="card"><h3>Selection</h3><p class="small"><code>Picker</code> maps a selection to a binding.</p></div>
+        <div class="card accent"><h3>Range</h3><p class="small"><code>Slider</code> and <code>Stepper</code> mutate a bounded value.</p></div>
+        <div class="card accent-violet"><h3>Progress</h3><p class="small"><code>ProgressView</code> represents determinate or indeterminate work.</p></div>
+      </div>
+      <div class="quote">The common shape is <strong>value ↔ control</strong>. Bindings connect the user action to the source of truth.</div>
+      <aside class="notes">This sets up the binding discussion. The control is not the owner of the application state; it edits it through a connection.</aside>
+    </section>
+
+    <!-- 20 -->
+    <section>
+      <div class="section-marker">Components</div>
+      <div class="eyebrow">19 · Navigation + presentation</div>
+      <h2>Navigation is also state</h2>
+      <div class="grid-2">
+        <pre><code class="language-swift">NavigationStack {
+    List(products) { product in
+        NavigationLink(
+            product.name,
+            value: product
+        )
+    }
+    .navigationDestination(
+        for: Product.self
+    ) { product in
+        ProductDetailView(product: product)
+    }
+}</code></pre>
+        <div class="card accent">
+          <h3>Think in transitions</h3>
+          <div class="flow">
+            <div class="node">Root</div><div class="arrow">→</div>
+            <div class="node">Product</div><div class="arrow">→</div>
+            <div class="node">Detail</div>
+          </div>
+          <p class="small"><code>sheet</code>, <code>alert</code>, and <code>confirmationDialog</code> follow the same declarative presentation model.</p>
+        </div>
+      </div>
+      <aside class="notes">A useful advanced framing: navigation and presentation can be modeled as data, which makes deep links and programmatic flows easier to reason about.</aside>
+    </section>
+
+    <!-- 21 -->
+    <section>
+      <div class="section-marker">State</div>
+      <div class="eyebrow">20 · State chapter</div>
+      <h2>Now invert the lens: the UI is a projection of state</h2>
+      <div class="flow" style="margin-top:48px">
+        <div class="node cyan">State</div><div class="arrow">→</div>
+        <div class="node cyan">View</div><div class="arrow">→</div>
+        <div class="node cyan">UI</div>
+      </div>
+      <div class="grid-2">
+        <div class="card accent-green">
+          <h3>Good question</h3>
+          <p class="big">Who owns this value?</p>
+        </div>
+        <div class="card accent-violet">
+          <h3>Better question</h3>
+          <p class="big">Who is allowed to change it—and who depends on it?</p>
+        </div>
+      </div>
+      <aside class="notes">From here onward, state ownership is the organizing principle. Every property wrapper is a different answer to lifetime, ownership, or observation.</aside>
+    </section>
+
+    <!-- 22 -->
+    <section>
+      <div class="section-marker">State</div>
+      <div class="eyebrow">21 · @State</div>
+      <h2>Local state owned by the view</h2>
+      <div class="grid-2">
+        <pre><code class="language-swift">struct CounterView: View {
+    @State private var count = 0
+
+    var body: some View {
+        VStack {
+            Text("\(count)")
+
+            Button("Increment") {
+                count += 1
+            }
+        }
+    }
+}</code></pre>
+        <div class="card accent">
+          <h3>Ownership</h3>
+          <div class="flow">
+            <div class="node cyan">View</div><div class="arrow">owns</div><div class="node">count</div>
+          </div>
+          <p class="small">Use for view-local, changing values. Don’t treat <code>@State</code> as a global application store.</p>
+        </div>
+      </div>
+      <aside class="notes">State is storage with a SwiftUI lifetime and update relationship. The key is ownership: this view owns the value.</aside>
+    </section>
+
+    <!-- 23 -->
+    <section>
+      <div class="section-marker">State</div>
+      <div class="eyebrow">22 · @Binding</div>
+      <h2>A binding is a read/write connection</h2>
+      <div class="grid-2">
+        <pre><code class="language-swift">struct Parent: View {
+    @State private var enabled = true
+
+    var body: some View {
+        Child(enabled: $enabled)
+    }
+}
+
+struct Child: View {
+    @Binding var enabled: Bool
+
+    var body: some View {
+        Toggle("Notifications",
+               isOn: $enabled)
+    }
+}</code></pre>
+        <div class="card accent-violet">
+          <h3>Flow</h3>
+          <div class="flow">
+            <div class="node">Parent state</div><div class="arrow">↔</div><div class="node violet">Binding</div><div class="arrow">↔</div><div class="node">Child control</div>
+          </div>
+          <p class="small">The child can edit the parent's source of truth without owning a duplicate.</p>
+        </div>
+      </div>
+      <aside class="notes">Binding solves the “child needs to edit parent state” problem. It is about connection, not ownership.</aside>
+    </section>
+
+    <!-- 24 -->
+    <section>
+      <div class="section-marker">State</div>
+      <div class="eyebrow">23 · Single source of truth</div>
+      <h2>Store the minimum; derive the rest</h2>
+      <div class="grid-2">
+        <div class="card accent-red">
+          <h3 class="warn">Avoid duplicated state</h3>
+          <pre><code class="language-swift">var items: [Item]
+var itemCount: Int
+var hasItems: Bool</code></pre>
+        </div>
+        <div class="card accent-green">
+          <h3 class="check">Prefer derived values</h3>
+          <pre><code class="language-swift">var items: [Item]
+
+var itemCount: Int {
+    items.count
+}
+
+var hasItems: Bool {
+    !items.isEmpty
+}</code></pre>
+        </div>
+      </div>
+      <div class="quote">Every extra mutable copy creates another synchronization problem.</div>
+      <aside class="notes">This principle is shared by modern declarative systems, including React and Compose: keep the canonical state and derive views from it.</aside>
+    </section>
+
+    <!-- 25 -->
+    <section>
+      <div class="section-marker">State</div>
+      <div class="eyebrow">24 · ObservableObject + @Published</div>
+      <h2>The Combine-era model you still need to recognize</h2>
+      <div class="grid-2">
+        <pre><code class="language-swift">import Combine
+
+final class ProfileModel: ObservableObject {
+    @Published var name = ""
+    @Published var isLoading = false
+}</code></pre>
+        <div class="card accent-violet">
+          <h3>Conceptually</h3>
+          <div class="flow">
+            <div class="node violet">@Published</div>
+            <div class="arrow">→</div>
+            <div class="node violet">Publisher</div>
+            <div class="arrow">→</div>
+            <div class="node">SwiftUI observer</div>
+          </div>
+          <p class="small"><code>@Published</code> is a Combine publisher mechanism; <code>ObservableObject</code> is the object-level observation contract.</p>
+        </div>
+      </div>
+      <aside class="notes">This is legacy only in the sense that newer code has a newer Observation model. Existing codebases absolutely still use it.</aside>
+    </section>
+
+    <!-- 26 -->
+    <section>
+      <div class="section-marker">State</div>
+      <div class="eyebrow">25 · StateObject vs ObservedObject</div>
+      <h2>Old model: lifetime vs reference</h2>
+      <div class="grid-2">
+        <div class="card accent">
+          <h3><code>@StateObject</code></h3>
+          <p class="small">The view creates and owns the observable object.</p>
+          <pre><code class="language-swift">@StateObject
+private var model = ProfileModel()</code></pre>
+        </div>
+        <div class="card accent-violet">
+          <h3><code>@ObservedObject</code></h3>
+          <p class="small">The object is supplied from elsewhere; this view observes it.</p>
+          <pre><code class="language-swift">@ObservedObject
+var model: ProfileModel</code></pre>
+        </div>
+      </div>
+      <div class="quote">The question is not “which wrapper is newer?” It is “who owns the object's lifetime?”</div>
+      <aside class="notes">This distinction matters when reading and maintaining older SwiftUI architecture.</aside>
+    </section>
+
+    <!-- 27 -->
+    <section>
+      <div class="section-marker">State</div>
+      <div class="eyebrow">26 · Modern Observation</div>
+      <h2><code>@Observable</code>: make the model observable</h2>
+      <div class="grid-2">
+        <pre><code class="language-swift">import Observation
+
+@Observable
+final class ProfileModel {
+    var name = ""
+    var isLoading = false
+}</code></pre>
+        <div class="card accent-green">
+          <h3>What changed?</h3>
+          <p class="small">The model declares observability at the type level. You do not manually add <code>@Published</code> to every observed property.</p>
+          <div class="pill-row">
+            <span class="pill">@Observable</span>
+            <span class="pill">Observable</span>
+            <span class="pill">fine-grained tracking</span>
+          </div>
+        </div>
+      </div>
+      <aside class="notes">Apple introduced Observation to simplify model-data flow and make dependency tracking more targeted.</aside>
+    </section>
+
+    <!-- 28 -->
+    <section>
+      <div class="section-marker">State</div>
+      <div class="eyebrow">27 · What observation tracks</div>
+      <h2>Dependency tracking follows what the view reads</h2>
+      <pre><code class="language-swift">struct ProfileHeader: View {
+    let model: ProfileModel
+
+    var body: some View {
+        Text(model.name)
+    }
+}</code></pre>
+      <div class="flow">
+        <div class="node cyan">ProfileHeader</div>
+        <div class="arrow">reads</div>
+        <div class="node cyan">model.name</div>
+        <div class="arrow">→</div>
+        <div class="node green">dependent view updates</div>
+      </div>
+      <p class="small">Observation can track property access rather than treating every property of a model as equally relevant.</p>
+      <aside class="notes">Be precise: this is about dependency tracking and invalidation, not a promise that only one text node will ever be reevaluated.</aside>
+    </section>
+
+    <!-- 29 -->
+    <section>
+      <div class="section-marker">State</div>
+      <div class="eyebrow">28 · Owning an @Observable model</div>
+      <h2>Modern ownership: <code>@State</code> can own the observable instance</h2>
+      <div class="grid-2">
+        <pre><code class="language-swift">@Observable
+final class CounterModel {
+    var count = 0
+
+    func increment() {
+        count += 1
+    }
+}
+
+struct CounterView: View {
+    @State private var model = CounterModel()
+
+    var body: some View {
+        Button("\(model.count)") {
+            model.increment()
+        }
+    }
+}</code></pre>
+        <div class="card accent">
+          <h3>Read this as</h3>
+          <div class="flow">
+            <div class="node cyan">@State</div><div class="arrow">owns</div><div class="node">model</div>
+          </div>
+          <p class="small">The model's lifetime follows the view's state storage, while Observation tracks the model's used properties.</p>
+        </div>
+      </div>
+      <aside class="notes">The important mental shift: “state wrapper” and “observable model” solve different problems and can be combined.</aside>
+    </section>
+
+    <!-- 30 -->
+    <section>
+      <div class="section-marker">State</div>
+      <div class="eyebrow">29 · @Bindable</div>
+      <h2>When controls need bindings into an observable model</h2>
+      <pre><code class="language-swift">@Observable
+final class Book {
+    var title = "Sample Book"
+    var isAvailable = true
+}
+
+struct BookEditView: View {
+    @Bindable var book: Book
+
+    var body: some View {
+        Form {
+            TextField("Title", text: $book.title)
+            Toggle("Available",
+                   isOn: $book.isAvailable)
+        }
+    }
+}</code></pre>
+      <div class="quote"><code>@Bindable</code> bridges an <code>Observable</code> model to the binding-based controls SwiftUI already knows how to use.</div>
+      <aside class="notes">This is one of the most useful modern Observation patterns to memorize.</aside>
+    </section>
+
+    <!-- 31 -->
+    <section>
+      <div class="section-marker">State</div>
+      <div class="eyebrow">30 · Observation mental model</div>
+      <h2>Separate four questions</h2>
+      <div class="grid-2">
+        <div class="card accent">
+          <h3>1 · Ownership</h3>
+          <p class="small">Who creates and owns the lifetime?</p>
+        </div>
+        <div class="card accent-violet">
+          <h3>2 · Mutation</h3>
+          <p class="small">Who is allowed to change it?</p>
+        </div>
+        <div class="card accent-green">
+          <h3>3 · Observation</h3>
+          <p class="small">Who should update when it changes?</p>
+        </div>
+        <div class="card accent-yellow">
+          <h3>4 · Binding</h3>
+          <p class="small">Does a control need read/write access?</p>
+        </div>
+      </div>
+      <aside class="notes">This four-question model prevents property-wrapper cargo culting.</aside>
+    </section>
+
+    <!-- 32 -->
+    <section>
+      <div class="section-marker">State</div>
+      <div class="eyebrow">31 · UI state as a state machine</div>
+      <h2>Make mutually exclusive UI states explicit</h2>
+      <div class="grid-2">
+        <div class="card accent-violet">
+          <h3 class="warn">Flags can drift</h3>
+          <pre><code class="language-swift">isLoading = true
+hasError = true
+hasContent = false</code></pre>
+          <p class="small">Three booleans can accidentally describe impossible combinations.</p>
+        </div>
+        <div class="card accent-green">
+          <h3 class="check">Model the states</h3>
+          <pre><code class="language-swift">enum ScreenState {
+    case loading
+    case loaded([Product])
+    case failed(Error)
+}</code></pre>
+          <p class="small">The legal states become visible in code.</p>
+        </div>
+      </div>
+      <aside class="notes">This is where declarative UI meets explicit state-machine thinking.</aside>
+    </section>
+
+    <!-- 33 -->
+    <section>
+      <div class="section-marker">State</div>
+      <div class="eyebrow">32 · Unidirectional data flow</div>
+      <h2>State down. Events up.</h2>
+      <div class="flow" style="margin-top:45px">
+        <div class="node cyan">State owner</div>
+        <div class="arrow">↓ state</div>
+        <div class="node">View</div>
+        <div class="arrow">↑ event</div>
+        <div class="node green">User action</div>
+      </div>
+      <div class="grid-3">
+        <div class="card"><h3>State</h3><p class="small">Read-only from the consumer's perspective when possible.</p></div>
+        <div class="card accent"><h3>Events</h3><p class="small">Explicit intent: tap, submit, delete, retry.</p></div>
+        <div class="card accent-violet"><h3>Owner</h3><p class="small">Applies business rules and emits new state.</p></div>
+      </div>
+      <aside class="notes">This is a shared architecture pattern across SwiftUI, Compose, and React—not a Swift-only convention.</aside>
+    </section>
+
+    <!-- 34 -->
+    <section>
+      <div class="section-marker">State</div>
+      <div class="eyebrow">33 · Async state</div>
+      <h2>Make loading, success, empty, and error visible</h2>
+      <pre><code class="language-swift">if model.isLoading {
+    ProgressView()
+} else if let error = model.errorMessage {
+    ErrorView(message: error)
+} else if model.products.isEmpty {
+    EmptyStateView()
+} else {
+    ProductList(products: model.products)
+}</code></pre>
+      <div class="pill-row">
+        <span class="pill">Loading</span>
+        <span class="pill">Success</span>
+        <span class="pill">Empty</span>
+        <span class="pill">Failure</span>
+        <span class="pill">Retry</span>
+      </div>
+      <aside class="notes">A professional screen is defined as much by its non-happy paths as by its loaded state.</aside>
+    </section>
+
+    <!-- 35 -->
+    <section>
+      <div class="section-marker">State</div>
+      <div class="eyebrow">34 · Architecture</div>
+      <h2>View, observable model, services</h2>
+      <div class="flow" style="margin-top:46px">
+        <div class="node cyan">View</div>
+        <div class="arrow">→</div>
+        <div class="node violet">Observable model</div>
+        <div class="arrow">→</div>
+        <div class="node green">Service</div>
+        <div class="arrow">→</div>
+        <div class="node">API / DB</div>
+      </div>
+      <div class="grid-3">
+        <div class="card"><h3>View</h3><p class="small">Presentation, bindings, navigation, user intent.</p></div>
+        <div class="card accent-violet"><h3>Model</h3><p class="small">Screen state + feature behavior + coordination.</p></div>
+        <div class="card accent-green"><h3>Service</h3><p class="small">Networking, persistence, authentication, external systems.</p></div>
+      </div>
+      <aside class="notes">Call this a responsibility map, not a mandate to use one named architecture. MVVM can fit; other architectures can fit too.</aside>
+    </section>
+
+    <!-- 36 -->
+    <section>
+      <div class="section-marker">Comparison</div>
+      <div class="eyebrow">35 · React</div>
+      <h2>React: component state and props</h2>
+      <div class="grid-2">
+        <pre><code class="language-jsx">function Profile() {
+  const [name, setName] = useState("");
+
+  return (
+    &lt;input
+      value={name}
+      onChange={e => setName(e.target.value)}
+    /&gt;
+  );
+}</code></pre>
+        <div class="card accent-violet">
+          <h3>Map the ideas</h3>
+          <table class="matrix">
+            <tr><th>Declarative idea</th><th>React</th></tr>
+            <tr><td>Component input</td><td>props</td></tr>
+            <tr><td>Local state</td><td><code>useState</code></td></tr>
+            <tr><td>Event</td><td>callback</td></tr>
+            <tr><td>Shared owner</td><td>lifted state / store</td></tr>
+          </table>
+        </div>
+      </div>
+      <aside class="notes">React state is component memory; when shared, move it to the closest common owner. This is conceptually similar to SwiftUI state hoisting.</aside>
+    </section>
+
+    <!-- 37 -->
+    <section>
+      <div class="section-marker">Comparison</div>
+      <div class="eyebrow">36 · Jetpack Compose</div>
+      <h2>Compose: state + recomposition</h2>
+      <div class="grid-2">
+        <pre><code class="language-kotlin">@Composable
+fun Hello() {
+    var name by remember {
+        mutableStateOf("")
+    }
+
+    TextField(
+        value = name,
+        onValueChange = { name = it }
+    )
+}</code></pre>
+        <div class="card accent-green">
+          <h3>Map the ideas</h3>
+          <table class="matrix">
+            <tr><th>Declarative idea</th><th>Compose</th></tr>
+            <tr><td>UI unit</td><td>Composable</td></tr>
+            <tr><td>Local memory</td><td><code>remember</code></td></tr>
+            <tr><td>Observable value</td><td><code>MutableState</code></td></tr>
+            <tr><td>UI update</td><td>recomposition</td></tr>
+          </table>
+        </div>
+      </div>
+      <aside class="notes">Compose tracks reads of State and schedules recomposition for affected composables. State holders and ViewModels can own state beyond a single composable.</aside>
+    </section>
+
+    <!-- 38 -->
+    <section>
+      <div class="section-marker">Comparison</div>
+      <div class="eyebrow">37 · Side-by-side</div>
+      <h2>Same architecture, different vocabulary</h2>
+      <table class="matrix" style="font-size:.46em">
+        <tr><th>Concept</th><th>SwiftUI</th><th>Compose</th><th>React</th></tr>
+        <tr><td>UI function</td><td><code>View</code> / <code>body</code></td><td><code>@Composable</code></td><td>component</td></tr>
+        <tr><td>Local state</td><td><code>@State</code></td><td><code>remember { mutableStateOf }</code></td><td><code>useState</code></td></tr>
+        <tr><td>Two-way edit</td><td><code>Binding</code></td><td>state + callback</td><td>value + callback</td></tr>
+        <tr><td>Observable model</td><td><code>@Observable</code></td><td>State / StateFlow / holder</td><td>store / state pattern</td></tr>
+        <tr><td>Environment</td><td><code>Environment</code></td><td>CompositionLocal</td><td>Context</td></tr>
+        <tr><td>UI update</td><td>dependency tracking</td><td>recomposition</td><td>render/update</td></tr>
+      </table>
+      <div class="quote" style="margin-top:20px">Do the architecture first; translate the vocabulary second.</div>
+      <aside class="notes">This is the portability slide. If you understand state ownership, all three frameworks become easier.</aside>
+    </section>
+
+    <!-- 39 -->
+    <section>
+      <div class="section-marker">Comparison</div>
+      <div class="eyebrow">38 · What transfers—and what does not</div>
+      <div class="grid-2">
+        <div class="card accent-green">
+          <h3>Transfers cleanly</h3>
+          <p class="small">
+            <span class="check">✓</span> State ownership<br>
+            <span class="check">✓</span> Single source of truth<br>
+            <span class="check">✓</span> Unidirectional data flow<br>
+            <span class="check">✓</span> Component composition<br>
+            <span class="check">✓</span> Derived state
+          </p>
+        </div>
+        <div class="card accent-yellow">
+          <h3>Keep framework-specific</h3>
+          <p class="small">
+            <span class="warn">!</span> Swift Observation vs Compose runtime state<br>
+            <span class="warn">!</span> SwiftUI layout proposal model vs Compose modifiers<br>
+            <span class="warn">!</span> React's render/Hook semantics<br>
+            <span class="warn">!</span> Platform navigation and lifecycle
+          </p>
+        </div>
+      </div>
+      <div class="quote" style="margin-top:22px">Cross-platform fluency is recognizing the <strong>invariant architecture</strong> while respecting each runtime's semantics.</div>
+      <aside class="notes">Avoid one-to-one API matching. Map concepts, then learn the local mechanics that make each framework idiomatic.</aside>
+    </section>
+
+    <!-- 40 -->
+    <section>
+      <div class="eyebrow">39 · Close</div>
+      <h2>The SwiftUI mental model in one frame</h2>
+      <div class="flow" style="margin-top:35px">
+        <div class="node cyan">State</div><div class="arrow">↓</div>
+        <div class="node">View</div><div class="arrow">↓</div>
+        <div class="node">UI</div><div class="arrow">↑</div>
+        <div class="node green">Events</div>
+        <div class="arrow">↔</div>
+        <div class="node violet">Observable model</div>
+      </div>
+      <div class="grid-2">
+        <div class="card accent">
+          <h3>Remember</h3>
+          <p class="small">Compose with relationships. Own state deliberately. Bind controls to the source of truth.</p>
+        </div>
+        <div class="card accent-violet">
+          <h3>Sources</h3>
+          <p class="tiny">
+            Apple SwiftUI: Layout fundamentals, Layout adjustments, Bindable, ObservedObject / Observation docs.<br>
+            React: State — A Component's Memory.<br>
+            Android Developers: State and Jetpack Compose, State Hoisting, Compose architecture.
+          </p>
+        </div>
+      </div>
+      <p class="tiny" style="margin-top:20px">Current API guidance verified against official documentation accessed September 2026.</p>
+      <aside class="notes">Finish with the mental model, not a list of APIs. The next step would be a workshop: build one feature three ways using the same state model.</aside>
+    </section>
+
+  </div>
+</div>
+
+<div class="footer">
+  <div class="source">SwiftUI · Declarative UI · Layout · Observation · React · Compose</div>
+  <div class="brand">Mobile Development Handbook</div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.2.1/dist/reveal.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/highlight.js@11.11.1/lib/highlight.min.js"></script>
+<script>
+  Reveal.initialize({
+    hash: true,
+    slideNumber: "c/t",
+    progress: true,
+    controls: true,
+    center: false,
+    width: 1440,
+    height: 810,
+    margin: 0.06,
+    minScale: 0.2,
+    maxScale: 1.35,
+    transition: "slide",
+    backgroundTransition: "fade",
+    plugins: []
+  });
+
+  if (window.hljs) {
+    document.querySelectorAll('pre code').forEach((block) => {
+      hljs.highlightElement(block);
+    });
+  }
+</script>
+</body>
+</html>
